@@ -1,0 +1,11 @@
+streamlit
+PIL
+matplotlib.pyplot
+os
+numpy
+requests
+dotenv
+fastapi
+uvicorn
+python-multipart
+opencv-python
