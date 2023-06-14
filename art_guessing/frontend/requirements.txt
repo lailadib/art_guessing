@@ -1,3 +1,0 @@
-streamlit
-PIL
-matplotlib.pyplot
