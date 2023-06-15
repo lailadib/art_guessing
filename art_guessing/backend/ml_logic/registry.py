@@ -1,4 +1,13 @@
 
 
-def load_model():
+
+def save_model() -> None:
+
+
+    return None
+
+
+def load_model()  -> None:
+
+
     return None
