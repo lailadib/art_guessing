@@ -14,7 +14,6 @@ setup(name='art guessing',
       #url="https://github.com/ TO BE DEFINED",
       install_requires=requirements,
       packages=find_packages(),
-      #test_suite="tests",
       # include_package_data: to install data from MANIFEST.in
       include_package_data=True,
       zip_safe=False)

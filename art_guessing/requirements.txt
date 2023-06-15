@@ -1,10 +1,6 @@
-streamlit
-PIL
-matplotlib.pyplot
-os
+matplotlib
 numpy
 requests
-dotenv
 fastapi
 uvicorn
 python-multipart

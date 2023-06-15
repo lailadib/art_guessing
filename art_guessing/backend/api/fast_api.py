@@ -1,9 +1,10 @@
 from fastapi import FastAPI, UploadFile, File
+from PIL import Image
 import os
 import numpy as np
 import cv2
 
-from ml_logic.registry import load_model
+from backend.ml_logic.registry import load_model
 
 
 #load_dotenv()
@@ -22,13 +23,12 @@ if app.state.model != None:
 def index():
     return {"status": "ok"}
 
-@app.post('/upload_image')
-async def receive_image(img: UploadFile=File(...)):
-    ### Receiving and decoding the image
-    contents = await img.read()
 
-    nparr = np.fromstring(contents, np.uint8)
-    cv2_img = cv2.imdecode(nparr, cv2.IMREAD_COLOR) # type(cv2_img) => numpy.ndarray
+@app.post('/upload_image')
+def receive_image(file: UploadFile):
+    ### Receiving and decoding the image
+
+    img = Image.open(file.file) # it is tested: can be opened
 
     ### Do your image classification stuff here....
 
