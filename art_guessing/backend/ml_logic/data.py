@@ -9,7 +9,6 @@ def images_to_dataset():
     in 3 datasets for training, validation and test
     Returns 3 tf.data.Dataset
     """
-
     #Image folders
     train_dir = os.path.join(LOCAL_DATA_PATH, 'train')
     test_dir = os.path.join(LOCAL_DATA_PATH, 'test')
