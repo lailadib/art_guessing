@@ -1,4 +1,7 @@
 from tensorflow.keras.utils import image_dataset_from_directory
+from tensorflow import convert_to_tensor
+import os
+from params import *
 
 def images_to_dataset():
     """
@@ -8,8 +11,8 @@ def images_to_dataset():
     """
 
     #Image folders
-    train_dir = './raw_data/artbench-10-imagefolder-split/train/'
-    test_dir = './raw_data/artbench-10-imagefolder-split/test/'
+    train_dir = os.path.join(LOCAL_DATA_PATH, 'train')
+    test_dir = os.path.join(LOCAL_DATA_PATH, 'test')
 
     #Specify image size and batch size parameters
     img_size = (256, 256)
@@ -47,6 +50,18 @@ def images_to_dataset():
         shuffle=True
     )
     return train_ds, val_ds, test_ds
+
+def preprocess_new_image():
+    """
+    Preprocessing the uploaded image.
+    It will be cropped to a square, then resized to become a 256x256 image
+    Load this image as a tensor object to be able to predict with it
+    """
+    ### Crop and resize the image
+
+    ### Load the image as a tensor
+
+
 
 train_ds, vals_ds, test_ds = images_to_dataset()
 for image_batch, labels_batch in train_ds :

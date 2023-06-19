@@ -1,3 +1,8 @@
+############### PACKAGE ACTIONS ######################
+reinstall_package:
+	@pip install -y art-guessing || :
+	@pip install -e .
+
 install_requirements:
 	pip install -r requirements.txt
 
