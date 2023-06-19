@@ -1,5 +1,7 @@
-./models
-*.ipynb
+models/
 .env
 .env.yaml
-./images
+raw_data/
+notebooks/
+*.egg-info
+__pycache__
