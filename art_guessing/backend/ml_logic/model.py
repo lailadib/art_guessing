@@ -2,8 +2,10 @@ from tensorflow import data
 from tensorflow.keras import layers, models, optimizers
 from tensorflow.keras.applications.efficientnet import EfficientNetB2
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
+import os
+from params import *
 
-def initialize_model(input_shape) -> Model:
+def initialize_model(input_shape):
     """
     Initialize the Neural Network with transfer learning from EfficientNetB1
     """
@@ -15,7 +17,7 @@ def initialize_model(input_shape) -> Model:
 
     return model
 
-def add_last_layers(model: Model, input_shape) -> Model:
+def add_last_layers(model, input_shape):
     """
     Add the last layers of the model
     """
@@ -49,8 +51,8 @@ def compile_model():
     Build the model from EfficientNetB1 and
     Compile the Neural Network
     """
-    model = initialize_model()
-    model = add_last_layers(model)
+    model = initialize_model((256,256,3))
+    model = add_last_layers(model, (256,256,3))
 
     #Compile
     opt = optimizers.Adam(learning_rate=0.001)
@@ -63,7 +65,7 @@ def compile_model():
 
     return model
 
-def train_model(model: Model, version: str, train_ds: data.Dataset, patience=4, validation_data=val_ds) -> Tuple[Model, dict]:
+def train_model(model, version: str, train_ds: data.Dataset, patience=4, validation_data=val_ds): # -> Tuple[Model, dict]:
     """
     Fit the model and return a tuple (fitted model, history)
     """
@@ -100,7 +102,15 @@ def train_model(model: Model, version: str, train_ds: data.Dataset, patience=4, 
 
     return model, history
 
-def evaluate_model(model: Model, test_ds: data.Dataset, verbose=0) -> Tuple[Model, dict]:
+def load_trained_model():
+
+    model = compile_model()
+    model.load_weights(os.path.join(LOCAL_MODEL_PATH, "efficientnetb2_v2.h5"))
+    print(model.summary())
+
+    return model
+
+def evaluate_model(model, test_ds: data.Dataset, verbose=0): # -> Tuple[Model, dict]:
     """
     Evaluate trained model performance on the dataset
     """
@@ -116,3 +126,6 @@ def evaluate_model(model: Model, test_ds: data.Dataset, verbose=0) -> Tuple[Mode
     print(f"✅ Model evaluated, Accuracy: {round(accuracy, 2)}")
 
     return metrics
+
+
+load_trained_model()
