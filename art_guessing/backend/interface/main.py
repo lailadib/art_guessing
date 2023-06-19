@@ -1,5 +1,5 @@
-from art_guessing.backend.ml_logic.data import images_to_dataset
-# from art_guessing.backend.ml_logic.model import
+from backend.ml_logic.data import images_to_dataset
+from backend.ml_logic.model import load_trained_model
 
 def train():
     """
@@ -12,3 +12,10 @@ def train():
     print("✅ Data loaded and ready to use \n")
 
     #Train model using model.py
+
+def predict():
+    """
+    Load the model if no model is already loaded
+    Preprocess the new image
+    Make prediction
+    """

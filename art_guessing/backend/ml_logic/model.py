@@ -30,10 +30,12 @@ def add_last_layers(model, input_shape):
     ])
 
     #Chain the petrained layers of EfficientNet with our own layers
+    base_model = initialize_model(input_shape)
+
     model = models.Sequential([
         layers.Input(shape = input_shape),
         augmentation,
-        initialize_model(input_shape),
+        base_model,
         layers.Flatten(),
         layers.Dense(300, activation='gelu'), #'gelu'
         layers.Dropout(0.25),
@@ -51,10 +53,10 @@ def compile_model():
     Build the model from EfficientNetB1 and
     Compile the Neural Network
     """
-    model = initialize_model((256,256,3))
-    model = add_last_layers(model, (256,256,3))
+    # model = initialize_model(INPUT_SHAPE)
+    model = add_last_layers(initialize_model(INPUT_SHAPE), INPUT_SHAPE)
 
-    #Compile
+    #Compile the model
     opt = optimizers.Adam(learning_rate=0.001)
     model.compile(loss='categorical_crossentropy',
                   optimizer=opt,
@@ -65,7 +67,7 @@ def compile_model():
 
     return model
 
-def train_model(model, version: str, train_ds: data.Dataset, patience=4, validation_data=val_ds): # -> Tuple[Model, dict]:
+def train_model(model, version: str, train_ds, val_ds):
     """
     Fit the model and return a tuple (fitted model, history)
     """
@@ -103,6 +105,7 @@ def train_model(model, version: str, train_ds: data.Dataset, patience=4, validat
     return model, history
 
 def load_trained_model():
+    print("Loading trained model... \n")
 
     model = compile_model()
     model.load_weights(os.path.join(LOCAL_MODEL_PATH, "efficientnetb2_v2.h5"))
@@ -110,7 +113,7 @@ def load_trained_model():
 
     return model
 
-def evaluate_model(model, test_ds: data.Dataset, verbose=0): # -> Tuple[Model, dict]:
+def evaluate_model(model, test_ds: data.Dataset, verbose=0):
     """
     Evaluate trained model performance on the dataset
     """
@@ -127,5 +130,15 @@ def evaluate_model(model, test_ds: data.Dataset, verbose=0): # -> Tuple[Model, d
 
     return metrics
 
+def predict(model, new_image):
 
-load_trained_model()
+    y_pred = model.predict(new_image)
+
+    predictions = {CLASS_NAMES[i]: round(y_pred[i],2) for i in range(len(CLASS_NAMES))}
+
+    if max(predictions.values()) < 0.2:
+        first_prediction = {'style': None, 'probability': max(predictions.values())}
+
+    first_prediction = {'style':max(predictions), 'probability': max(predictions.values())}
+
+    return {first_prediction, predictions}
