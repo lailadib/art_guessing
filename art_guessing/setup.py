@@ -6,7 +6,7 @@ with open("requirements.txt") as f:
 requirements = [x.strip() for x in content if "git+" not in x]
 
 setup(name='art guessing',
-      version="0.0.01",
+      version="0.0.2",
       description="art guessing",
       license="MIT",
       author="art guessing team & Le Wagon",

@@ -1,6 +1,6 @@
 from tensorflow.keras.utils import image_dataset_from_directory
 from tensorflow import convert_to_tensor
-import os
+from os.path import join
 from params import *
 from PIL import Image
 import numpy as np
@@ -12,11 +12,11 @@ def images_to_dataset():
     Returns 3 tf.data.Dataset
     """
     #Image folders
-    train_dir = os.path.join(LOCAL_DATA_PATH, 'train')
-    test_dir = os.path.join(LOCAL_DATA_PATH, 'test')
+    train_dir = join(LOCAL_DATA_PATH, 'train')
+    test_dir = join(LOCAL_DATA_PATH, 'test')
 
     #Specify image size and batch size parameters
-    img_size = (IMG_SIZE, IMG_SIZE)
+    img_size = (int(IMG_SIZE), int(IMG_SIZE))
     batch_size = 32
 
     #Create the datasets
@@ -60,11 +60,10 @@ def preprocess_new_image(uploaded_file=None, to_crop_resize=False, padding=0, im
     an of size image_size x image_size on request by setting to_crop_resize to True.
     By default the image is expected to be delievered already cropped to square
     and dowsized to image_size x image_size
-
     """
 
     if uploaded_file != None:
-        image_size = image_size
+        image_size = int(IMG_SIZE)
         img = Image.open(uploaded_file)
         if to_crop_resize == True:
             #crop and downsize the image
@@ -89,14 +88,7 @@ def preprocess_new_image(uploaded_file=None, to_crop_resize=False, padding=0, im
 
         ### convert the image to a tensor
         img_tens = convert_to_tensor(img, dtype=np.float32)
-        np.expand_dims(img_tens, axis=0)
+        img_tens = np.expand_dims(img_tens, axis=0)
         assert img_tens.shape == (1, image_size, image_size, 3)
-        #img_tens.shape(1, image_size, image_size, 3)
 
     return img_tens
-
-train_ds, vals_ds, test_ds = images_to_dataset()
-for image_batch, labels_batch in train_ds :
-    print(image_batch.shape)
-    print(labels_batch.shape)
-    break
