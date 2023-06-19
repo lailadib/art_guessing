@@ -6,5 +6,8 @@ uvicorn
 python-multipart
 opencv-python
 
+#image processing
+pillow
+
 #Data processing and models
 tensorflow
