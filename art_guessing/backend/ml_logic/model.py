@@ -68,7 +68,7 @@ def compile_model():
 
     return model
 
-def train_model(model, version: str, train_ds, val_ds):
+def train_model(model, model_name: str, train_ds, val_ds):
     """
     Fit the model
     Saved a .h5 file with the trained weights with version name
@@ -91,12 +91,13 @@ def train_model(model, version: str, train_ds, val_ds):
         )
 
     mcp = ModelCheckpoint(
-        "{}.h5".format(version),
+        "{}.h5".format(model_name),
         save_weights_only=True,
         monitor='val_accuracy',
         mode='auto',
         verbose=0,
-        save_best_only=True
+        save_best_only=True,
+        filepath=os.path.join(LOCAL_MODEL_PATH, "{}.h5".format(model_name))
         )
 
     history = model.fit(train_ds,
@@ -107,17 +108,26 @@ def train_model(model, version: str, train_ds, val_ds):
 
     return model, history
 
-def load_trained_model():
+def load_trained_model(model_name=None):
     """
     Load the model with pre-trained weights
     """
+    model = compile_model()
+
+    if model_name == None:
+        filename = STD_MODEL_NAME #load standard model if not given anothe one
+    else:
+        filename = model_name
+
     print("Loading trained model... \n")
 
-    model = compile_model()
-    model.load_weights(os.path.join(LOCAL_MODEL_PATH, "efficientnetb2_v2.h5"))
+    try:
+        model.load_weights(os.path.join(LOCAL_MODEL_PATH, filename))
+    except:
+        print(f"This file: {os.path.join(LOCAL_MODEL_PATH, filename)} does not exist!")
+        return None
 
     print(model.summary())
-
     return model
 
 def evaluate_model(model, test_ds: data.Dataset, verbose=0):
@@ -130,7 +140,6 @@ def evaluate_model(model, test_ds: data.Dataset, verbose=0):
 
     metrics = model.evaluate(test_ds, return_dict=True)
 
-    loss = metrics['loss']
     accuracy = metrics['accuracy']
 
     print(f"✅ Model evaluated, Accuracy: {round(accuracy, 2)}")
