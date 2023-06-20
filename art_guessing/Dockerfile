@@ -16,4 +16,7 @@ RUN apt-get update && apt-get install -y python3-opencv
 # Copy the model to container
 COPY models models
 
+# Copy params to container
+COPY params.py params.py
+
 CMD uvicorn backend.api.fast_api:app --host 0.0.0.0 --port $PORT

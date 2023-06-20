@@ -30,7 +30,7 @@ def receive_image(file: UploadFile):
     #Test 2 (prefer if works)
     ### Receiving an image file and sending it unchagenged to the predict function (Option 2):
     ### translate to tensor first. image coming from the front end already square, downsized and padded
-    img_tens = preprocess_new_image(file)
+    img_tens = preprocess_new_image(file.file)
     predicted = predict(app.state.model, img_tens)
 
     # 1. predicted_style {'style': 'some_style', 'proba': 'some_proba'}
