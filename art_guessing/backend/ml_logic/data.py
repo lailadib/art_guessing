@@ -6,10 +6,14 @@ from PIL import Image
 import numpy as np
 
 def images_to_dataset():
-    """
-    Transform the jpg contained in train and test folder
-    in 3 datasets for training, validation and test
-    Returns 3 tf.data.Dataset
+    """Transform the jpg contained in train and test folders
+    in 3 datasets for training, validation and test.
+    The validation set represents 20% of the training set.
+    ----------
+    Returns 3 tf.data.Dataset:
+    train_ds, val_ds, test_ds.
+    train_ds and val_ds contains (images, labels)
+    test_ds contains (images)
     """
     #Image folders
     train_dir = join(LOCAL_DATA_PATH, 'train')
@@ -50,34 +54,44 @@ def images_to_dataset():
         image_size=img_size,
         shuffle=True
     )
+    print("✅ Train, Validation and Test datasets ready to use")
+
     return train_ds, val_ds, test_ds
 
 def preprocess_new_image(uploaded_file=None, to_crop_resize=False, padding=0, image_size=IMG_SIZE):
-    """
-    Preprocesses the uploaded image file wich is coming as jpeg.
-    Returns a tensorflow tensor in the shape = (1, image_size, image_size, 3)
+    """Preprocess the uploaded image file wich is coming as jpeg.
     The image will be cropped to a square then resized to become
-    an of size image_size x image_size on request by setting to_crop_resize to True.
-    By default the image is expected to be delievered already cropped to square
-    and dowsized to image_size x image_size
+    size (image_size x image_size) on request by setting to_crop_resize to True.
+    By default the image is expected to be delivered already cropped to square
+    and downsized to (image_size x image_size)
+    ----------
+    Arguments:
+    uploaded_file -- path to the image
+    to_crop_resize -- bool. False by default. Set to True if crop and resize in needed
+    padding -- integer value. 0 by default.
+    image_size -- integer. 256 by default. Size of the squared output image.
+    ----------
+    Returns a tensor with shape = (1, image_size, image_size, 3)
     """
 
     if uploaded_file != None:
         image_size = int(IMG_SIZE)
         img = Image.open(uploaded_file)
+
         if to_crop_resize == True:
-            #crop and downsize the image
+            #Crop and downsize the image
             width, height = img.size
             diff = abs(width - height)
-            if width != height: #crop if image is not square
+
+            if width != height: #Crop if image is not square
                 if width > height:
-                    if padding >= height/2: padding = 0 #set padding 0 to prevent cut of whole image
+                    if padding >= height/2: padding = 0 #Set padding 0 to prevent cut of whole image
                     l = diff/2 + padding
                     r = l + height - 2*padding
                     t = 0 + padding
                     b = height - padding
                 elif width < height:
-                    if padding >= width/2: padding = 0 #set padding 0 to prevent cut of whole image
+                    if padding >= width/2: padding = 0 #Set padding 0 to prevent cut of whole image
                     l = 0 + padding
                     r = width - padding
                     t = diff/2 + padding
@@ -86,7 +100,7 @@ def preprocess_new_image(uploaded_file=None, to_crop_resize=False, padding=0, im
             if image_size < img.size[0] and image_size < img.size[1]:
                 img = img.resize((image_size, image_size))
 
-        ### convert the image to a tensor
+        #Convert the image to a tensor
         img_tens = convert_to_tensor(img, dtype=np.float32)
         img_tens = np.expand_dims(img_tens, axis=0)
         assert img_tens.shape == (1, image_size, image_size, 3)
